@@ -8,12 +8,12 @@
         public double Price { get; set; }
         public required string Status { get; set; }
         public required string Description { get; set; }
+        public int Beds { get; set; }
+        public int GuestsPerRoom { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
         // Navigation property
         public ICollection<Reservation>? Reservations { get; set; }
-        public ICollection<ReservationRoom>? ReservationRooms { get; set; }
-        public ICollection<Review>? Reviews { get; set; }
     }
 }

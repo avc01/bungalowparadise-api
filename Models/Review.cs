@@ -4,13 +4,11 @@
     {
         public int Id { get; set; } 
         public int UserId { get; set; } 
-        public int RoomId { get; set; } 
         public int Rating { get; set; } 
         public required string Comment { get; set; } 
         public DateTime CreatedAt { get; set; }
 
         // Navigation property
         public User? User { get; set; }
-        public Room? Room { get; set; }
     }
 }

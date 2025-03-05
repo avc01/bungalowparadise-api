@@ -15,6 +15,17 @@ builder.Services.AddDbContext<HotelDbContext>(options =>
     new MySqlServerVersion(new Version(8, 4, 4)))
 );
 
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactAppPolicy", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,8 +37,19 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Enable the configured CORS policy
+app.UseCors("ReactAppPolicy");
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+
+
+
+
+
+
+

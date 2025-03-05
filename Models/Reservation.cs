@@ -8,11 +8,13 @@
         public DateTime CheckOut { get; set; }
         public required string Status { get; set; }
         public DateTime CreatedAt { get; set; }
+        public int NumberOfGuests { get; set; }
+        public int NumberOfAdults { get; set; }
+        public int NumberOfKids { get; set; }
 
         // Navigation property
         public User? User { get; set; }
         public ICollection<Room>? Rooms { get; set; }
-        public ICollection<ReservationRoom>? ReservationRooms { get; set; }
         public ICollection<Payment>? Payments { get; set; }
     }
 }

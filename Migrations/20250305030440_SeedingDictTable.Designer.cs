@@ -12,8 +12,8 @@ using bungalowparadise_api.DbContext;
 namespace bungalowparadise_api.Migrations
 {
     [DbContext(typeof(HotelDbContext))]
-    [Migration("20250223045614_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250305030440_SeedingDictTable")]
+    partial class SeedingDictTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,75 @@ namespace bungalowparadise_api.Migrations
                     b.HasIndex("RoomsId");
 
                     b.ToTable("ReservationRoom");
+
+                    b.HasData(
+                        new
+                        {
+                            ReservationsId = 1,
+                            RoomsId = 1
+                        },
+                        new
+                        {
+                            ReservationsId = 1,
+                            RoomsId = 2
+                        },
+                        new
+                        {
+                            ReservationsId = 2,
+                            RoomsId = 2
+                        });
+                });
+
+            modelBuilder.Entity("bungalowparadise_api.Models.CardDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CardCode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CardHolderName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("CardNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ExpiredDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("CardDetails");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CardCode = 123,
+                            CardHolderName = "John Doe",
+                            CardNumber = 1234567812345678L,
+                            ExpiredDate = new DateTime(2027, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9115),
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CardCode = 456,
+                            CardHolderName = "Jane Smith",
+                            CardNumber = 8765432187654321L,
+                            ExpiredDate = new DateTime(2028, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9122),
+                            UserId = 2
+                        });
                 });
 
             modelBuilder.Entity("bungalowparadise_api.Models.Notification", b =>
@@ -71,6 +140,24 @@ namespace bungalowparadise_api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9141),
+                            Message = "Welcome to our service!",
+                            Status = "Unread",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9142),
+                            Message = "Your reservation has been confirmed!",
+                            Status = "Unread",
+                            UserId = 2
+                        });
                 });
 
             modelBuilder.Entity("bungalowparadise_api.Models.PasswordReset", b =>
@@ -99,6 +186,22 @@ namespace bungalowparadise_api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("PasswordResets");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ExpiresAt = new DateTime(2025, 3, 5, 5, 4, 40, 159, DateTimeKind.Utc).AddTicks(9160),
+                            ResetToken = "abcd1234",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ExpiresAt = new DateTime(2025, 3, 5, 5, 4, 40, 159, DateTimeKind.Utc).AddTicks(9164),
+                            ResetToken = "efgh5678",
+                            UserId = 2
+                        });
                 });
 
             modelBuilder.Entity("bungalowparadise_api.Models.Payment", b =>
@@ -142,6 +245,28 @@ namespace bungalowparadise_api.Migrations
                         .IsUnique();
 
                     b.ToTable("Payments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Amount = 200.5,
+                            CreatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9224),
+                            PaymentMethod = "Credit Card",
+                            PaymentStatus = "Completed",
+                            ReservationId = 1,
+                            TransactionId = "TX123456"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Amount = 350.75,
+                            CreatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9225),
+                            PaymentMethod = "PayPal",
+                            PaymentStatus = "Pending",
+                            ReservationId = 2,
+                            TransactionId = "TX789012"
+                        });
                 });
 
             modelBuilder.Entity("bungalowparadise_api.Models.Reservation", b =>
@@ -163,6 +288,15 @@ namespace bungalowparadise_api.Migrations
                         .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 
+                    b.Property<int>("NumberOfAdults")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfGuests")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfKids")
+                        .HasColumnType("int");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -177,21 +311,32 @@ namespace bungalowparadise_api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Reservations");
-                });
 
-            modelBuilder.Entity("bungalowparadise_api.Models.ReservationRoom", b =>
-                {
-                    b.Property<int>("ReservationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ReservationId", "RoomId");
-
-                    b.HasIndex("RoomId");
-
-                    b.ToTable("ReservationRooms");
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CheckIn = new DateTime(2025, 3, 6, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9202),
+                            CheckOut = new DateTime(2025, 3, 8, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9204),
+                            CreatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9206),
+                            NumberOfAdults = 2,
+                            NumberOfGuests = 2,
+                            NumberOfKids = 0,
+                            Status = "Confirmed",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CheckIn = new DateTime(2025, 3, 10, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9207),
+                            CheckOut = new DateTime(2025, 3, 13, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9207),
+                            CreatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9208),
+                            NumberOfAdults = 2,
+                            NumberOfGuests = 3,
+                            NumberOfKids = 1,
+                            Status = "Pending",
+                            UserId = 2
+                        });
                 });
 
             modelBuilder.Entity("bungalowparadise_api.Models.Review", b =>
@@ -214,19 +359,32 @@ namespace bungalowparadise_api.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
-
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoomId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Reviews");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Comment = "Amazing experience!",
+                            CreatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9241),
+                            Rating = 5,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Comment = "Very comfortable stay!",
+                            CreatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9242),
+                            Rating = 4,
+                            UserId = 2
+                        });
                 });
 
             modelBuilder.Entity("bungalowparadise_api.Models.Room", b =>
@@ -237,6 +395,9 @@ namespace bungalowparadise_api.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Beds")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
@@ -245,6 +406,9 @@ namespace bungalowparadise_api.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int>("GuestsPerRoom")
+                        .HasColumnType("int");
 
                     b.Property<double>("Price")
                         .HasColumnType("double");
@@ -274,6 +438,34 @@ namespace bungalowparadise_api.Migrations
                         .IsUnique();
 
                     b.ToTable("Rooms");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Beds = 1,
+                            CreatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9182),
+                            Description = "Cozy single room",
+                            GuestsPerRoom = 1,
+                            Price = 100.0,
+                            RoomNumber = "101",
+                            Status = "Available",
+                            Type = "Single",
+                            UpdatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9183)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Beds = 2,
+                            CreatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9184),
+                            Description = "Spacious double room",
+                            GuestsPerRoom = 2,
+                            Price = 150.0,
+                            RoomNumber = "102",
+                            Status = "Available",
+                            Type = "Double",
+                            UpdatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9185)
+                        });
                 });
 
             modelBuilder.Entity("bungalowparadise_api.Models.User", b =>
@@ -293,7 +485,11 @@ namespace bungalowparadise_api.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("FullName")
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -316,6 +512,41 @@ namespace bungalowparadise_api.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9003),
+                            Email = "john@example.com",
+                            LastName = "Doe",
+                            Name = "John",
+                            PasswordHash = "hashedpassword",
+                            Phone = "1234567890",
+                            UpdatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9005)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9006),
+                            Email = "jane@example.com",
+                            LastName = "Smith",
+                            Name = "Jane",
+                            PasswordHash = "hashedpassword",
+                            Phone = "9876543210",
+                            UpdatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9006)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9008),
+                            Email = "michael@example.com",
+                            LastName = "Johnson",
+                            Name = "Michael",
+                            PasswordHash = "hashedpassword",
+                            Phone = "5556667777",
+                            UpdatedAt = new DateTime(2025, 3, 5, 3, 4, 40, 159, DateTimeKind.Utc).AddTicks(9008)
+                        });
                 });
 
             modelBuilder.Entity("ReservationRoom", b =>
@@ -331,6 +562,17 @@ namespace bungalowparadise_api.Migrations
                         .HasForeignKey("RoomsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("bungalowparadise_api.Models.CardDetail", b =>
+                {
+                    b.HasOne("bungalowparadise_api.Models.User", "User")
+                        .WithOne("CardDetail")
+                        .HasForeignKey("bungalowparadise_api.Models.CardDetail", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("bungalowparadise_api.Models.Notification", b =>
@@ -377,40 +619,13 @@ namespace bungalowparadise_api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("bungalowparadise_api.Models.ReservationRoom", b =>
-                {
-                    b.HasOne("bungalowparadise_api.Models.Reservation", "Reservation")
-                        .WithMany("ReservationRooms")
-                        .HasForeignKey("ReservationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("bungalowparadise_api.Models.Room", "Room")
-                        .WithMany("ReservationRooms")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Reservation");
-
-                    b.Navigation("Room");
-                });
-
             modelBuilder.Entity("bungalowparadise_api.Models.Review", b =>
                 {
-                    b.HasOne("bungalowparadise_api.Models.Room", "Room")
-                        .WithMany("Reviews")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("bungalowparadise_api.Models.User", "User")
                         .WithMany("Reviews")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Room");
 
                     b.Navigation("User");
                 });
@@ -418,19 +633,12 @@ namespace bungalowparadise_api.Migrations
             modelBuilder.Entity("bungalowparadise_api.Models.Reservation", b =>
                 {
                     b.Navigation("Payments");
-
-                    b.Navigation("ReservationRooms");
-                });
-
-            modelBuilder.Entity("bungalowparadise_api.Models.Room", b =>
-                {
-                    b.Navigation("ReservationRooms");
-
-                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("bungalowparadise_api.Models.User", b =>
                 {
+                    b.Navigation("CardDetail");
+
                     b.Navigation("Notifications");
 
                     b.Navigation("PasswordResets");
