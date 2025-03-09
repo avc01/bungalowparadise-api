@@ -103,10 +103,10 @@
                 entity.Property(n => n.Status).HasDefaultValue("Unread");
                 entity.Property(n => n.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 
-                // Relation: Notification -> User
-                entity.HasOne(n => n.User)
+                // Relation: Notification -> Reservation
+                entity.HasOne(n => n.Reservation)
                       .WithMany(u => u.Notifications)
-                      .HasForeignKey(n => n.UserId)
+                      .HasForeignKey(n => n.ReservationId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -150,8 +150,8 @@
             );
 
             modelBuilder.Entity<Notification>().HasData(
-                new Notification { Id = 1, UserId = 1, Message = "Welcome to our service!", Status = "Unread", CreatedAt = DateTime.UtcNow },
-                new Notification { Id = 2, UserId = 2, Message = "Your reservation has been confirmed!", Status = "Unread", CreatedAt = DateTime.UtcNow }
+                new Notification { Id = 1, ReservationId = 1, Message = "Welcome to our service!", Status = "Unread", CreatedAt = DateTime.UtcNow },
+                new Notification { Id = 2, ReservationId = 2, Message = "Your reservation has been confirmed!", Status = "Unread", CreatedAt = DateTime.UtcNow }
             );
 
             modelBuilder.Entity<PasswordReset>().HasData(

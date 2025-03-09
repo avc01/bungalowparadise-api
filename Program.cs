@@ -1,9 +1,12 @@
+using bungalowparadise_api.ConfigModels;
 using bungalowparadise_api.DbContext;
+using bungalowparadise_api.HostedServices;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -14,6 +17,8 @@ builder.Services.AddDbContext<HotelDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
     new MySqlServerVersion(new Version(8, 4, 4)))
 );
+
+builder.Services.AddHostedService<EmailNotificationService>();
 
 // Configure CORS
 builder.Services.AddCors(options =>

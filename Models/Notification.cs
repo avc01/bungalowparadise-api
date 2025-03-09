@@ -3,12 +3,12 @@
     public class Notification
     {
         public int Id { get; set; }
-        public int UserId { get; set; }
+        public int ReservationId { get; set; }
         public required string Message { get; set; }
         public required string Status { get; set; }
         public DateTime CreatedAt { get; set; }
 
         // Navigation property
-        public User? User { get; set; }
+        public Reservation? Reservation { get; set; }
     }
 }

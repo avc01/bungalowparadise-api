@@ -15,7 +15,6 @@
         public CardDetail? CardDetail { get; set; }
         public ICollection<PasswordReset>? PasswordResets { get; set; }
         public ICollection<Reservation>? Reservations { get; set; }
-        public ICollection<Notification>? Notifications { get; set; }
         public ICollection<Review>? Reviews { get; set; }
     }
 }

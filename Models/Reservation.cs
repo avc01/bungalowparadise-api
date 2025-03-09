@@ -16,5 +16,6 @@
         public User? User { get; set; }
         public ICollection<Room>? Rooms { get; set; }
         public ICollection<Payment>? Payments { get; set; }
+        public ICollection<Notification>? Notifications { get; set; }
     }
 }
