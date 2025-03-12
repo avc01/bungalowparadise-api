@@ -1,7 +1,10 @@
 using bungalowparadise_api.ConfigModels;
 using bungalowparadise_api.DbContext;
 using bungalowparadise_api.HostedServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +21,8 @@ builder.Services.AddDbContext<HotelDbContext>(options =>
     new MySqlServerVersion(new Version(8, 4, 4)))
 );
 
-builder.Services.AddHostedService<EmailNotificationService>();
+builder.Services.AddSingleton<EmailNotificationService>();
+builder.Services.AddHostedService(provider => provider.GetRequiredService<EmailNotificationService>());
 
 // Configure CORS
 builder.Services.AddCors(options =>
@@ -30,6 +34,25 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
+// Add Auth
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var config = builder.Configuration;
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = config["Jwt:Issuer"],
+            ValidAudience = config["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(config["Jwt:Key"]!))
+        };
+    });
 
 var app = builder.Build();
 
@@ -45,16 +68,9 @@ app.UseHttpsRedirection();
 // Enable the configured CORS policy
 app.UseCors("ReactAppPolicy");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
-
-
-
-
-
-
-
-
