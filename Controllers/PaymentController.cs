@@ -1,10 +1,12 @@
 ﻿using bungalowparadise_api.DbContext;
 using bungalowparadise_api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace bungalowparadise_api.Controllers
 {
+    [Authorize(Roles = "Admin,User")]
     [Route("api/[controller]")]
     [ApiController]
     public class PaymentController : ControllerBase
@@ -16,6 +18,7 @@ namespace bungalowparadise_api.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Payment>>> GetPayments()
         {
@@ -33,6 +36,7 @@ namespace bungalowparadise_api.Controllers
             return payment;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Payment>> CreatePayment(Payment payment)
         {
@@ -41,6 +45,7 @@ namespace bungalowparadise_api.Controllers
             return CreatedAtAction(nameof(GetPayment), new { id = payment.Id }, payment);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePayment(int id, Payment payment)
         {
@@ -55,6 +60,7 @@ namespace bungalowparadise_api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePayment(int id)
         {

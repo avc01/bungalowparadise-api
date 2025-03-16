@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using bungalowparadise_api.DbContext;
 
@@ -11,9 +12,11 @@ using bungalowparadise_api.DbContext;
 namespace bungalowparadise_api.Migrations
 {
     [DbContext(typeof(HotelDbContext))]
-    partial class HotelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250315205726_AddNewColUserRole")]
+    partial class AddNewColUserRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,36 +54,6 @@ namespace bungalowparadise_api.Migrations
                         {
                             ReservationsId = 2,
                             RoomsId = 2
-                        },
-                        new
-                        {
-                            ReservationsId = 3,
-                            RoomsId = 4
-                        },
-                        new
-                        {
-                            ReservationsId = 4,
-                            RoomsId = 6
-                        },
-                        new
-                        {
-                            ReservationsId = 4,
-                            RoomsId = 10
-                        },
-                        new
-                        {
-                            ReservationsId = 5,
-                            RoomsId = 5
-                        },
-                        new
-                        {
-                            ReservationsId = 6,
-                            RoomsId = 9
-                        },
-                        new
-                        {
-                            ReservationsId = 6,
-                            RoomsId = 12
                         });
                 });
 
@@ -122,7 +95,7 @@ namespace bungalowparadise_api.Migrations
                             CardCode = 123,
                             CardHolderName = "John Doe",
                             CardNumber = 1234567812345678L,
-                            ExpiredDate = new DateTime(2027, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7226),
+                            ExpiredDate = new DateTime(2027, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6347),
                             UserId = 1
                         },
                         new
@@ -131,26 +104,8 @@ namespace bungalowparadise_api.Migrations
                             CardCode = 456,
                             CardHolderName = "Jane Smith",
                             CardNumber = 8765432187654321L,
-                            ExpiredDate = new DateTime(2028, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7235),
+                            ExpiredDate = new DateTime(2028, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6359),
                             UserId = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CardCode = 789,
-                            CardHolderName = "Lucía Gómez",
-                            CardNumber = 4321432143214321L,
-                            ExpiredDate = new DateTime(2029, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7236),
-                            UserId = 4
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CardCode = 321,
-                            CardHolderName = "Carlos Ramírez",
-                            CardNumber = 5678567856785678L,
-                            ExpiredDate = new DateTime(2026, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7238),
-                            UserId = 5
                         });
                 });
 
@@ -190,7 +145,7 @@ namespace bungalowparadise_api.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7259),
+                            CreatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6380),
                             Message = "Welcome to our service!",
                             ReservationId = 1,
                             Status = "Unread"
@@ -198,7 +153,7 @@ namespace bungalowparadise_api.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7261),
+                            CreatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6381),
                             Message = "Your reservation has been confirmed!",
                             ReservationId = 2,
                             Status = "Unread"
@@ -236,14 +191,14 @@ namespace bungalowparadise_api.Migrations
                         new
                         {
                             Id = 1,
-                            ExpiresAt = new DateTime(2025, 3, 15, 23, 42, 6, 627, DateTimeKind.Utc).AddTicks(7280),
+                            ExpiresAt = new DateTime(2025, 3, 15, 22, 57, 25, 718, DateTimeKind.Utc).AddTicks(6404),
                             ResetToken = "abcd1234",
                             UserId = 1
                         },
                         new
                         {
                             Id = 2,
-                            ExpiresAt = new DateTime(2025, 3, 15, 23, 42, 6, 627, DateTimeKind.Utc).AddTicks(7284),
+                            ExpiresAt = new DateTime(2025, 3, 15, 22, 57, 25, 718, DateTimeKind.Utc).AddTicks(6409),
                             ResetToken = "efgh5678",
                             UserId = 2
                         });
@@ -296,7 +251,7 @@ namespace bungalowparadise_api.Migrations
                         {
                             Id = 1,
                             Amount = 200.5,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7383),
+                            CreatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6480),
                             PaymentMethod = "Credit Card",
                             PaymentStatus = "Completed",
                             ReservationId = 1,
@@ -306,7 +261,7 @@ namespace bungalowparadise_api.Migrations
                         {
                             Id = 2,
                             Amount = 350.75,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7384),
+                            CreatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6481),
                             PaymentMethod = "PayPal",
                             PaymentStatus = "Pending",
                             ReservationId = 2,
@@ -361,9 +316,9 @@ namespace bungalowparadise_api.Migrations
                         new
                         {
                             Id = 1,
-                            CheckIn = new DateTime(2025, 3, 16, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7351),
-                            CheckOut = new DateTime(2025, 3, 18, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7353),
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7355),
+                            CheckIn = new DateTime(2025, 3, 16, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6457),
+                            CheckOut = new DateTime(2025, 3, 18, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6460),
+                            CreatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6461),
                             NumberOfAdults = 2,
                             NumberOfGuests = 2,
                             NumberOfKids = 0,
@@ -373,62 +328,14 @@ namespace bungalowparadise_api.Migrations
                         new
                         {
                             Id = 2,
-                            CheckIn = new DateTime(2025, 3, 20, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7356),
-                            CheckOut = new DateTime(2025, 3, 23, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7357),
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7357),
+                            CheckIn = new DateTime(2025, 3, 20, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6462),
+                            CheckOut = new DateTime(2025, 3, 23, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6463),
+                            CreatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6463),
                             NumberOfAdults = 2,
                             NumberOfGuests = 3,
                             NumberOfKids = 1,
-                            Status = "Confirmed",
+                            Status = "Pending",
                             UserId = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CheckIn = new DateTime(2025, 3, 17, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7358),
-                            CheckOut = new DateTime(2025, 3, 19, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7359),
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7359),
-                            NumberOfAdults = 1,
-                            NumberOfGuests = 1,
-                            NumberOfKids = 0,
-                            Status = "Confirmed",
-                            UserId = 4
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CheckIn = new DateTime(2025, 3, 25, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7360),
-                            CheckOut = new DateTime(2025, 3, 30, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7361),
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7361),
-                            NumberOfAdults = 2,
-                            NumberOfGuests = 4,
-                            NumberOfKids = 2,
-                            Status = "Cancelled",
-                            UserId = 5
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CheckIn = new DateTime(2025, 3, 22, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7362),
-                            CheckOut = new DateTime(2025, 3, 24, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7362),
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7363),
-                            NumberOfAdults = 1,
-                            NumberOfGuests = 2,
-                            NumberOfKids = 1,
-                            Status = "Confirmed",
-                            UserId = 6
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CheckIn = new DateTime(2025, 3, 18, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7364),
-                            CheckOut = new DateTime(2025, 3, 21, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7364),
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7364),
-                            NumberOfAdults = 2,
-                            NumberOfGuests = 2,
-                            NumberOfKids = 0,
-                            Status = "Confirmed",
-                            UserId = 7
                         });
                 });
 
@@ -465,42 +372,18 @@ namespace bungalowparadise_api.Migrations
                         new
                         {
                             Id = 1,
-                            Comment = "¡Experiencia increíble!",
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7400),
+                            Comment = "Amazing experience!",
+                            CreatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6498),
                             Rating = 5,
                             UserId = 1
                         },
                         new
                         {
                             Id = 2,
-                            Comment = "¡Estancia muy cómoda!",
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7401),
+                            Comment = "Very comfortable stay!",
+                            CreatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6499),
                             Rating = 4,
                             UserId = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Comment = "Buena atención, pero la habitación era algo ruidosa.",
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7402),
-                            Rating = 3,
-                            UserId = 4
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Comment = "Excelente servicio y vista espectacular.",
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7403),
-                            Rating = 5,
-                            UserId = 5
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Comment = "No cumplió mis expectativas, había problemas con la limpieza.",
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7404),
-                            Rating = 2,
-                            UserId = 6
                         });
                 });
 
@@ -572,8 +455,8 @@ namespace bungalowparadise_api.Migrations
                             Id = 1,
                             Bathrooms = 1,
                             Beds = 1,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7306),
-                            Description = "Acogedora habitación individual",
+                            CreatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6434),
+                            Description = "Cozy single room",
                             GuestsPerRoom = 1,
                             ImageUrl = "/placeholder.svg",
                             Name = "Deluxe Ocean View",
@@ -581,15 +464,15 @@ namespace bungalowparadise_api.Migrations
                             RoomNumber = "101",
                             Status = "Available",
                             Type = "Single",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7306)
+                            UpdatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6435)
                         },
                         new
                         {
                             Id = 2,
                             Bathrooms = 1,
                             Beds = 2,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7308),
-                            Description = "Amplia habitación doble",
+                            CreatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6437),
+                            Description = "Spacious double room",
                             GuestsPerRoom = 2,
                             ImageUrl = "/placeholder.svg",
                             Name = "Premium Garden Suite",
@@ -597,167 +480,7 @@ namespace bungalowparadise_api.Migrations
                             RoomNumber = "102",
                             Status = "Available",
                             Type = "Double",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7309)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Bathrooms = 2,
-                            Beds = 1,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7310),
-                            Description = "Suite de lujo con vista al mar",
-                            GuestsPerRoom = 2,
-                            ImageUrl = "/placeholder.svg",
-                            Name = "Executive Ocean Suite",
-                            Price = 250.0,
-                            RoomNumber = "103",
-                            Status = "Available",
-                            Type = "Suite",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7311)
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Bathrooms = 1,
-                            Beds = 1,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7312),
-                            Description = "Habitación individual económica",
-                            GuestsPerRoom = 1,
-                            ImageUrl = "/placeholder.svg",
-                            Name = "Budget Single",
-                            Price = 90.0,
-                            RoomNumber = "104",
-                            Status = "Occupied",
-                            Type = "Single",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7313)
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Bathrooms = 1,
-                            Beds = 2,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7314),
-                            Description = "Habitación doble moderna con balcón",
-                            GuestsPerRoom = 2,
-                            ImageUrl = "/placeholder.svg",
-                            Name = "City View Deluxe",
-                            Price = 160.0,
-                            RoomNumber = "105",
-                            Status = "Available",
-                            Type = "Double",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7314)
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Bathrooms = 2,
-                            Beds = 1,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7316),
-                            Description = "Gran suite con jacuzzi privado",
-                            GuestsPerRoom = 2,
-                            ImageUrl = "/placeholder.svg",
-                            Name = "Presidential Suite",
-                            Price = 300.0,
-                            RoomNumber = "106",
-                            Status = "Available",
-                            Type = "Suite",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7316)
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Bathrooms = 1,
-                            Beds = 2,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7318),
-                            Description = "Cómoda habitación doble con escritorio",
-                            GuestsPerRoom = 2,
-                            ImageUrl = "/placeholder.svg",
-                            Name = "Business Room",
-                            Price = 140.0,
-                            RoomNumber = "107",
-                            Status = "Under Maintenance",
-                            Type = "Double",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7318)
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Bathrooms = 1,
-                            Beds = 1,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7320),
-                            Description = "Tranquila habitación individual cerca del jardín",
-                            GuestsPerRoom = 1,
-                            ImageUrl = "/placeholder.svg",
-                            Name = "Garden Nook",
-                            Price = 95.0,
-                            RoomNumber = "108",
-                            Status = "Available",
-                            Type = "Single",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7320)
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Bathrooms = 1,
-                            Beds = 2,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7321),
-                            Description = "Habitación doble con vista parcial al mar",
-                            GuestsPerRoom = 2,
-                            ImageUrl = "/placeholder.svg",
-                            Name = "Sunset Double",
-                            Price = 170.0,
-                            RoomNumber = "109",
-                            Status = "Available",
-                            Type = "Double",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7322)
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Bathrooms = 2,
-                            Beds = 2,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7323),
-                            Description = "Suite de lujo con cocina incluida",
-                            GuestsPerRoom = 4,
-                            ImageUrl = "/placeholder.svg",
-                            Name = "Family Suite",
-                            Price = 280.0,
-                            RoomNumber = "110",
-                            Status = "Occupied",
-                            Type = "Suite",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7323)
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Bathrooms = 1,
-                            Beds = 1,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7325),
-                            Description = "Habitación individual ideal para viajeros",
-                            GuestsPerRoom = 1,
-                            ImageUrl = "/placeholder.svg",
-                            Name = "Traveler's Spot",
-                            Price = 105.0,
-                            RoomNumber = "111",
-                            Status = "Available",
-                            Type = "Single",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7325)
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Bathrooms = 1,
-                            Beds = 1,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7326),
-                            Description = "Habitación doble con cama tamaño king",
-                            GuestsPerRoom = 2,
-                            ImageUrl = "/placeholder.svg",
-                            Name = "King Double Room",
-                            Price = 155.0,
-                            RoomNumber = "112",
-                            Status = "Available",
-                            Type = "Double",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7327)
+                            UpdatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6437)
                         });
                 });
 
@@ -816,86 +539,38 @@ namespace bungalowparadise_api.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7068),
+                            CreatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6173),
                             Email = "john@example.com",
                             LastName = "Doe",
                             Name = "John",
                             PasswordHash = "hashedpassword",
                             Phone = "1234567890",
                             Role = "User",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7070)
+                            UpdatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6175)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7071),
+                            CreatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6252),
                             Email = "jane@example.com",
                             LastName = "Smith",
                             Name = "Jane",
                             PasswordHash = "hashedpassword",
                             Phone = "9876543210",
                             Role = "User",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7072)
+                            UpdatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6252)
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7073),
+                            CreatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6254),
                             Email = "michael@example.com",
                             LastName = "Johnson",
                             Name = "Michael",
                             PasswordHash = "hashedpassword",
                             Phone = "5556667777",
                             Role = "User",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7074)
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7075),
-                            Email = "lucia@example.com",
-                            LastName = "Gómez",
-                            Name = "Lucía",
-                            PasswordHash = "hashedpassword",
-                            Phone = "1112223333",
-                            Role = "User",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7075)
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7076),
-                            Email = "carlos@example.com",
-                            LastName = "Ramírez",
-                            Name = "Carlos",
-                            PasswordHash = "hashedpassword",
-                            Phone = "4445556666",
-                            Role = "Admin",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7076)
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7077),
-                            Email = "sofia@example.com",
-                            LastName = "Fernández",
-                            Name = "Sofía",
-                            PasswordHash = "hashedpassword",
-                            Phone = "7778889999",
-                            Role = "User",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7078)
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CreatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7079),
-                            Email = "andres@example.com",
-                            LastName = "Martínez",
-                            Name = "Andrés",
-                            PasswordHash = "hashedpassword",
-                            Phone = "2223334444",
-                            Role = "Admin",
-                            UpdatedAt = new DateTime(2025, 3, 15, 21, 42, 6, 627, DateTimeKind.Utc).AddTicks(7079)
+                            UpdatedAt = new DateTime(2025, 3, 15, 20, 57, 25, 718, DateTimeKind.Utc).AddTicks(6254)
                         });
                 });
 

@@ -22,16 +22,44 @@ namespace bungalowparadise_api.Controllers
         private readonly EmailNotificationService _emailNotificationService;
         private readonly PasswordHasher<User> _passwordHasher;
         private readonly IConfiguration _config;
+        private readonly IWebHostEnvironment _env;
 
         public AuthController(
             HotelDbContext context, 
             EmailNotificationService emailNotificationService, 
-            IConfiguration config)
+            IConfiguration config,
+            IWebHostEnvironment env)
         {
             _context = context;
             _emailNotificationService = emailNotificationService;
             _config = config;
+            _env = env;
             _passwordHasher = new PasswordHasher<User>();
+        }
+
+        [HttpGet("dev-token")]
+        public IActionResult GenerateDevToken([FromQuery] string role = "Admin")
+        {
+            // Only allow this in Development
+            if (!_env.IsDevelopment())
+                return Unauthorized("Dev token generation is only available in development.");
+
+            string email = "test@dev.com";
+
+            var user = new User
+            {
+                Id = -1,
+                Email = email,
+                Role = role,
+                LastName = string.Empty,
+                Name = string.Empty,
+                PasswordHash = string.Empty,
+                Phone = string.Empty,
+            };
+
+            var token = GenerateJwtToken(user);
+
+            return Ok(token);
         }
 
         [HttpPost("register")]
@@ -49,6 +77,7 @@ namespace bungalowparadise_api.Controllers
                 LastName = dto.LastName,
                 Phone = dto.Phone,
                 PasswordHash = string.Empty,
+                Role = "User"
             };
 
             user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
@@ -75,7 +104,7 @@ namespace bungalowparadise_api.Controllers
             return Ok(new
             {
                 token,
-                user = new { user.Id, user.Email, user.Name, user.LastName }
+                user = new { user.Id, user.Email, user.Name, user.LastName, user.Phone }
             });
         }
 
@@ -124,7 +153,7 @@ namespace bungalowparadise_api.Controllers
             return Ok("Contraseña actualizada correctamente.");
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin,User")]
         [HttpGet("me")]
         public async Task<IActionResult> Me()
         {
@@ -133,7 +162,7 @@ namespace bungalowparadise_api.Controllers
             if (user == null)
                 return Unauthorized();
 
-            return Ok(new { user.Id, user.Email, user.Name, user.LastName });
+            return Ok(new { user.Id, user.Email, user.Name, user.LastName, user.Phone });
         }
 
         private string GenerateJwtToken(User user)
@@ -141,7 +170,8 @@ namespace bungalowparadise_api.Controllers
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));

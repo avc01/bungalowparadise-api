@@ -1,10 +1,13 @@
 ﻿using bungalowparadise_api.DbContext;
 using bungalowparadise_api.Models;
+using bungalowparadise_api.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace bungalowparadise_api.Controllers
 {
+    [Authorize(Roles = "Admin,User")]
     [Route("api/[controller]")]
     [ApiController]
     public class ReservationController : ControllerBase
@@ -16,6 +19,7 @@ namespace bungalowparadise_api.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations()
         {
@@ -67,6 +71,18 @@ namespace bungalowparadise_api.Controllers
             _context.Reservations.Remove(reservation);
             await _context.SaveChangesAsync();
             return NoContent();
+        }
+
+        [HttpPost("confirm-reservation")]
+        public async Task<IActionResult> ConfirmReservation([FromBody] ReservationConfirmationDto reservationConfirmationDto)
+        {
+            // Guardar La reserva en la base de datos.
+
+            // Guardar la tarjeta / Encriptados guardar tarjetas
+
+            // Enviar Correo
+
+            return Ok();
         }
     }
 }

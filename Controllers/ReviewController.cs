@@ -1,10 +1,12 @@
 ﻿using bungalowparadise_api.DbContext;
 using bungalowparadise_api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace bungalowparadise_api.Controllers
 {
+    [Authorize(Roles = "Admin,User")]
     [Route("api/[controller]")]
     [ApiController]
     public class ReviewController : ControllerBase
