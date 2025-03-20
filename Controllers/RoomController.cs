@@ -23,7 +23,7 @@ namespace bungalowparadise_api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
         {
-            var rooms = await _context.Rooms.ToListAsync();
+            var rooms = await _context.Rooms.Where(x => x.Status == "Available").ToListAsync();
 
             return rooms.OrderBy(x => x.Price).ToList();
         }
