@@ -110,13 +110,14 @@ namespace bungalowparadise_api.Controllers
             return CreatedAtAction(nameof(GetRoom), new { id = roomToSave.Id }, roomToSave);
         }
 
+        [Authorize(Roles = "Admin, User")]
         [HttpGet("SearchRooms")]
         public async Task<ActionResult<IEnumerable<Room>>> SearchRooms
-      (DateTime? checkIn,
-      DateTime? checkOut,
-       string RoomType,
-       double? minPrice,
-       double? maxPrice)
+              (DateTime? checkIn,
+              DateTime? checkOut,
+               string RoomType,
+               double? minPrice,
+               double? maxPrice)
         {
 
             var query = _context.Rooms.AsQueryable();
