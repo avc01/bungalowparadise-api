@@ -82,8 +82,8 @@ namespace bungalowparadise_api.Controllers
         [HttpPost("upload")]
         public async Task<IActionResult> UploadRoomWithImage([FromForm] RoomDto room, IFormFile image, [FromServices] S3Service s3Service)
         {
-            var roomToSave = new Room() 
-            { 
+            var roomToSave = new Room()
+            {
                 Description = room.Description,
                 Name = room.Name,
                 RoomNumber = room.RoomNumber,
@@ -108,6 +108,47 @@ namespace bungalowparadise_api.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetRoom), new { id = roomToSave.Id }, roomToSave);
+        }
+
+        [Authorize(Roles = "Admin, User")]
+        [HttpGet("SearchRooms")]
+        public async Task<ActionResult<IEnumerable<Room>>> SearchRooms
+              (DateTime? checkIn,
+              DateTime? checkOut,
+               string RoomType,
+               double? minPrice,
+               double? maxPrice)
+        {
+
+            var query = _context.Rooms.AsQueryable();
+
+            if (checkIn != null && checkOut != null)
+            {
+
+                query = query.Where(room => !room.Reservations.Any(reservation =>
+                    reservation.Status != "Cancelled" && // Optional: ignore cancelled reservations
+                    reservation.CheckIn < checkOut && checkIn < reservation.CheckOut));
+            }
+
+            if (!string.IsNullOrEmpty(RoomType))
+            {
+                query = query.Where(room => room.Type == RoomType);
+
+            }
+
+            if (minPrice.HasValue)
+            {
+                query = query.Where(room => room.Price >= minPrice.Value);
+            }
+
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(room => room.Price <= maxPrice.Value);
+            }
+
+            var availableRooms = await query.ToListAsync();
+
+            return availableRooms;
         }
     }
 }
