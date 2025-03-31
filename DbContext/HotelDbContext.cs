@@ -86,8 +86,6 @@
                 entity.HasKey(p => p.Id);
                 entity.Property(p => p.PaymentMethod).IsRequired();
                 entity.Property(p => p.PaymentStatus).HasDefaultValue("Pending");
-                entity.Property(p => p.TransactionId).IsRequired();
-                entity.HasIndex(p => p.TransactionId).IsUnique();
                 entity.Property(p => p.CreatedAt)
                       .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 

@@ -6,7 +6,6 @@ using bungalowparadise_api.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Common;
 using System.Text.RegularExpressions;
 
 namespace bungalowparadise_api.Controllers
@@ -124,26 +123,49 @@ namespace bungalowparadise_api.Controllers
                 Rooms = rooms,
             };
 
-            var newCard = new CardDetail()
+            if (!await _context.CardDetails.AnyAsync(x => x.UserId == reservationDto.UserId))
             {
-                CardHolderName = reservationDto.CardName,
-                CardCode = int.Parse(reservationDto.CVV),
-                CardNumber = long.Parse(reservationDto.CardNumber.Replace(" ", "")),
-                UserId = reservationDto.UserId,
-                ExpiredDate = new DateTime(int.Parse(reservationDto.ExpiryYear),
-                                           int.Parse(reservationDto.ExpiryMonth), 1),
-            };
+                var newCard = new CardDetail()
+                {
+                    CardHolderName = reservationDto.CardName,
+                    CardCode = int.Parse(reservationDto.CVV),
+                    CardNumber = long.Parse(reservationDto.CardNumber.Replace(" ", "")),
+                    UserId = reservationDto.UserId,
+                    ExpiredDate = new DateTime(int.Parse(reservationDto.ExpiryYear),
+                                          int.Parse(reservationDto.ExpiryMonth), 1),
+                };
+
+                await _context.CardDetails.AddAsync(newCard);
+            }
 
             await _context.Reservations.AddAsync(newReservation);
-            await _context.CardDetails.AddAsync(newCard);
             await _context.SaveChangesAsync();
+
+            var newPayment = new Payment()
+            {
+                Amount = reservationDto.TotalAmount,
+                PaymentMethod = cardType ?? "Card",
+                PaymentStatus = "Pending",
+                ReservationId = newReservation.Id,
+            };
+
+            await _context.Payments.AddAsync(newPayment);
+            await _context.SaveChangesAsync();
+
+            string reservationCode = $"BP-{newReservation.Id}";
 
             await _emailNotificationService.SendEmailAsync(
                 reservationDto.UserEmail,
-                ReceiptMailTemplate.GetReceiptTemplate(reservationDto),
+                ReceiptMailTemplate.GetReceiptTemplate(reservationDto, reservationCode),
                 "Comprobante de Reservación - Bungalow Paradise");
 
-            return Ok("Reservación confirmada exitosamente.");
+            return Ok(new
+            { 
+                status = "Reservación confirmada exitosamente.", 
+                reservationId = reservationCode,
+                rooms = rooms.Count,
+                amount = reservationDto.TotalAmount,
+            });
         }
 
         private (bool IsValid, string? CardType, string? ErrorMessage) ValidateCard(string cardNumber, string expiryMonth, string expiryYear, string cvv)

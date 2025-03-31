@@ -3,6 +3,7 @@ using bungalowparadise_api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace bungalowparadise_api.Controllers
 {
@@ -36,11 +37,18 @@ namespace bungalowparadise_api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Review>> CreateReview(Review review)
+        public async Task<ActionResult<Review>> CreateReview([Required, FromBody] ReviewDto review)
         {
-            _context.Reviews.Add(review);
+            var newReview = new Review()
+            {
+                Comment = review.Comment,
+                Rating = review.Rating,
+                UserId = review.UserId,
+            };
+
+            _context.Reviews.Add(newReview);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetReview), new { id = review.Id }, review);
+            return CreatedAtAction(nameof(GetReview), new { id = newReview.Id }, newReview);
         }
 
         [HttpPut("{id}")]
