@@ -1,6 +1,6 @@
 ﻿namespace bungalowparadise_api.Models.DTOs
 {
-    public class RoomDto
+    public class SaveRoomDto
     {
         public required string Name { get; set; }
         public required string RoomNumber { get; set; }

@@ -21,11 +21,45 @@ namespace bungalowparadise_api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
+        public async Task<ActionResult<IEnumerable<GetRoomDto>>> GetRooms()
         {
-            var rooms = await _context.Rooms.Where(x => x.Status == "Available").ToListAsync();
+            var roomsWithReservedDates = await _context.Rooms.AsNoTracking()
+                                                             .Select(r => new 
+                                                             {
+                                                                r.Id,
+                                                                r.RoomNumber,
+                                                                r.Type,
+                                                                r.Price,
+                                                                r.Status,
+                                                                r.Description,
+                                                                r.Beds,
+                                                                r.GuestsPerRoom,
+                                                                r.Name,
+                                                                r.ImageUrl,
+                                                                r.Bathrooms,
+                             
+                                                                // Other room properties as needed
+                                                                ReservedDateRanges = r.Reservations
+                                                                    .Select(res => new List<DateTime> { res.CheckIn, res.CheckOut })
+                                                                    .ToList()
+                                                             })
+                                                             .ToListAsync();
 
-            return rooms.OrderBy(x => x.Price).ToList();
+            return roomsWithReservedDates.Select(x => new GetRoomDto()
+            {
+                Id = x.Id,
+                RoomNumber = x.RoomNumber,
+                Type = x.Type,
+                Price = x.Price,
+                Status = x.Status,
+                Description = x.Description,
+                Beds = x.Beds,
+                GuestsPerRoom = x.GuestsPerRoom,
+                Name = x.Name,
+                ImageUrl = x.ImageUrl,
+                Bathrooms = x.Bathrooms,
+                ReservedDateRanges = x.ReservedDateRanges,
+            }).OrderBy(x => x.Price).ToList();
         }
 
         [HttpGet("{id}")]
@@ -80,7 +114,7 @@ namespace bungalowparadise_api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadRoomWithImage([FromForm] RoomDto room, IFormFile image, [FromServices] S3Service s3Service)
+        public async Task<IActionResult> UploadRoomWithImage([FromForm] SaveRoomDto room, IFormFile image, [FromServices] S3Service s3Service)
         {
             var roomToSave = new Room()
             {
