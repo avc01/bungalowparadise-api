@@ -1,8 +1,13 @@
 ﻿using bungalowparadise_api.DbContext;
 using bungalowparadise_api.Models;
+using bungalowparadise_api.Models.DTOs;
+using bungalowparadise_api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.X509;
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace bungalowparadise_api.Controllers
 {
@@ -34,6 +39,16 @@ namespace bungalowparadise_api.Controllers
                 return NotFound();
             }
             return cardDetail;
+        }
+
+        [HttpGet("user-card")]
+        public async Task<ActionResult<CardDto>> GetCardDetailOfUser(int userId, bool masked = true)
+        {
+            var userCard = await GetCardDetailDtoOfUser(userId, masked);
+            if (userCard == null)
+                return NotFound();
+
+            return Ok(userCard);
         }
 
         [HttpPost]
@@ -70,6 +85,78 @@ namespace bungalowparadise_api.Controllers
             _context.CardDetails.Remove(cardDetail);
             await _context.SaveChangesAsync();
             return NoContent();
+        }
+
+        [HttpPost("new-card")]
+        public async Task<ActionResult<CardDto>> AddNewUserCard([Required, FromBody] NewCardDto newCard, [FromServices] CardValidatorService cardValidatorService)
+        {
+            var (isCardValid, _, cardError) = cardValidatorService.ValidateCard(newCard.CardNumber, newCard.ExpiryMonth, newCard.ExpiryYear, newCard.CVV);
+            if (!isCardValid)
+                return BadRequest(cardError);
+
+            var cardToAdd = new CardDetail()
+            {
+                CardHolderName = newCard.CardHolder,
+                CardCode = int.Parse(newCard.CVV),
+                CardNumber = long.Parse(newCard.CardNumber.Replace(" ", "")),
+                UserId = newCard.UserId,
+                ExpiredDate = new DateTime(int.Parse(newCard.ExpiryYear),
+                                          int.Parse(newCard.ExpiryMonth), 1),
+            };
+
+            if (await _context.CardDetails.AnyAsync(x => x.UserId == newCard.UserId))
+            {
+                cardToAdd.Id = newCard.OldCardId.GetValueOrDefault();
+
+                _context.CardDetails.Update(cardToAdd);
+            }
+            else
+            {
+                await _context.CardDetails.AddAsync(cardToAdd);
+            }
+
+            await _context.SaveChangesAsync();
+
+            var userCard = await GetCardDetailDtoOfUser(newCard.UserId);
+            return Ok(userCard);
+        }
+
+        private async Task<CardDto?> GetCardDetailDtoOfUser(int userId, bool masked = true)
+        {
+            var cardDetail = await _context.CardDetails.AsNoTracking().SingleOrDefaultAsync(x => x.UserId == userId);
+
+            if (cardDetail == null)
+                return null;
+
+            var cardNumber = cardDetail.CardNumber.ToString();
+
+            var publicCardNumber = cardNumber;
+
+            if (masked)
+            {
+                var first4 = cardNumber[..4];
+                var last4 = cardNumber[^4..];
+                var middleMask = string.Join(" ", Enumerable.Repeat("•", cardNumber.Length - 8));
+
+                publicCardNumber = $"{first4} {middleMask} {last4}";
+            }
+
+            return new CardDto()
+            {
+                Id = cardDetail.Id.ToString(),
+                CardHolder = cardDetail.CardHolderName,
+                CardNumber = publicCardNumber,
+                ExpiryMonth = cardDetail.ExpiredDate.Month.ToString("D2"),
+                ExpiryYear = cardDetail.ExpiredDate.Year.ToString(),
+                CardType = cardNumber switch
+                {
+                    _ when Regex.IsMatch(cardNumber, @"^4\d{12}(\d{3})?$") => "visa",
+                    _ when Regex.IsMatch(cardNumber, @"^5[1-5]\d{14}$") => "mastercard",
+                    _ when Regex.IsMatch(cardNumber, @"^3[47]\d{13}$") => "amex",
+                    _ => string.Empty
+                },
+                CVV = masked ? string.Empty : cardDetail.CardCode.ToString(),
+            };
         }
     }
 }

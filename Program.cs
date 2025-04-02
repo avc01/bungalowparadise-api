@@ -50,6 +50,7 @@ builder.Services.AddDbContext<HotelDbContext>(options =>
 );
 
 builder.Services.AddSingleton<S3Service>();
+builder.Services.AddSingleton<CardValidatorService>();
 builder.Services.AddSingleton<EmailNotificationService>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<EmailNotificationService>());
 
