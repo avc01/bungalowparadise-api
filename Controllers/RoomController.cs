@@ -40,6 +40,7 @@ namespace bungalowparadise_api.Controllers
                              
                                                                 // Other room properties as needed
                                                                 ReservedDateRanges = r.Reservations
+                                                                    .Where(res => res.Status == "Confirmed")
                                                                     .Select(res => new List<DateTime> { res.CheckIn, res.CheckOut })
                                                                     .ToList()
                                                              })

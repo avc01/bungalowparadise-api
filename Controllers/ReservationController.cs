@@ -7,7 +7,6 @@ using bungalowparadise_api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
 
 namespace bungalowparadise_api.Controllers
 {
@@ -25,9 +24,41 @@ namespace bungalowparadise_api.Controllers
             _emailNotificationService = emailNotificationService;
         }
 
+        [Authorize(Roles = "User")]
+        [HttpGet("user/view-reservations")]
+        public async Task<ActionResult<IEnumerable<UserReservationViewDto>>> GetReservationsUser(int userId)
+        {
+            var allUserReservations = await _context.Reservations
+                .AsNoTracking()
+                .Include(x => x.Rooms)
+                .Include(x => x.Payments)
+                .Where(x => x.UserId == userId)
+                .ToListAsync();
+
+            var toSend = allUserReservations.Select(x => 
+            {
+                return new UserReservationViewDto()
+                {
+                    ReservationId = x.Id,
+                    CheckIn = x.CheckIn,
+                    CheckOut = x.CheckOut,
+                    CreatedAt = x.CreatedAt,
+                    NumberOfGuests = x.NumberOfGuests,
+                    NumberOfAdults = x.NumberOfAdults,
+                    NumberOfKids = x.NumberOfKids,
+                    Status = x.CheckIn < DateTime.UtcNow ? "Completed" : x.Status,
+                    Location = "Playa Hermosa, Guanacaste, Costa Rica",
+                    Rooms = x?.Rooms?.Select(y => new UserReservationRoomsDto { Name = y.Name, Type = y.Type }) ?? [],
+                    TotalPrice = x?.Payments?.Sum(y => y.Amount) ?? 0,
+                };
+            });
+
+            return Ok(toSend);
+        }
+
         [Authorize(Roles = "Admin")]
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations()
+        [HttpGet("admin/view-reservations")]
+        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservationsAdmin()
         {
             return await _context.Reservations.ToListAsync();
         }
@@ -98,9 +129,6 @@ namespace bungalowparadise_api.Controllers
             if (rooms.Count != reservationDto.RoomIds.Count())
                 return BadRequest("Una o más habitaciones seleccionadas no existen.");
 
-            // Marcar habitaciones como ocupadas
-            rooms.ForEach(r => r.Status = "Occupied");
-
             var checkIn = new DateTime(reservationDto.CheckIn.Year,
                                        reservationDto.CheckIn.Month,
                                        reservationDto.CheckIn.Day,
@@ -167,6 +195,20 @@ namespace bungalowparadise_api.Controllers
                 rooms = rooms.Count,
                 amount = reservationDto.TotalAmount,
             });
+        }
+
+        [HttpPut("cancel-reservation")]
+        public async Task<IActionResult> CancelReservation(int reservationId) 
+        {
+            var reservation = await _context.Reservations.FindAsync(reservationId);
+            var payment = await _context.Payments.SingleOrDefaultAsync(x => x.ReservationId == reservationId);
+
+            reservation.Status = "Cancelled";
+            payment.PaymentStatus = "Cancelled";
+
+            await _context.SaveChangesAsync();
+
+            return Ok($"BP-{reservationId} Cancelled");
         }
     }
 }

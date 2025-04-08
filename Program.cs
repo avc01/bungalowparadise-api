@@ -2,6 +2,8 @@ using bungalowparadise_api.ConfigModels;
 using bungalowparadise_api.DbContext;
 using bungalowparadise_api.HostedServices;
 using bungalowparadise_api.Services;
+using bungalowparadise_api.Services.RAGServices;
+using bungalowparadise_api.Services.RAGServices.ToolServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -49,6 +51,17 @@ builder.Services.AddDbContext<HotelDbContext>(options =>
     new MySqlServerVersion(new Version(8, 4, 4)))
 );
 
+// AI Chat Registration
+builder.Services.AddHttpClient<OllamaService>();
+
+// AI RAG Tools
+builder.Services.AddScoped<ChatRagPipelineService>();
+builder.Services.AddScoped<PromptComposer>();
+builder.Services.AddScoped<BookingToolService>();
+builder.Services.AddScoped<ReviewToolService>();
+builder.Services.AddScoped<HotelInfoToolService>();
+
+// Single Services
 builder.Services.AddSingleton<S3Service>();
 builder.Services.AddSingleton<CardValidatorService>();
 builder.Services.AddSingleton<EmailNotificationService>();

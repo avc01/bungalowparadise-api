@@ -71,6 +71,7 @@ namespace bungalowparadise_api.HostedServices
             var upcomingReservations = await dbContext.Reservations
                 .Include(r => r.User)
                 .Include(r => r.Notifications)
+                .Where(r => r.Status == "Confirmed")
                 .Where(r =>
                     (r.CheckIn > DateTime.UtcNow && r.CheckIn < DateTime.UtcNow.AddDays(7) && !r.Notifications.Any(n => n.Message == NotificationOneWeekInAdvance)) ||
                     (r.CheckIn > DateTime.UtcNow && r.CheckIn < DateTime.UtcNow.AddHours(1) && !r.Notifications.Any(n => n.Message == NotificationOneHourInAdvance)))        
