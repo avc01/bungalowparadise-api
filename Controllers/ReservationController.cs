@@ -146,7 +146,7 @@ namespace bungalowparadise_api.Controllers
                 Status = "Confirmed",
                 CreatedAt = DateTime.UtcNow,
                 UserId = reservationDto.UserId,
-                NumberOfGuests = rooms.Sum(x => x.GuestsPerRoom),
+                NumberOfGuests = reservationDto.NumberOfGuests,
                 NumberOfAdults = 0,
                 NumberOfKids = 0,
                 Rooms = rooms,

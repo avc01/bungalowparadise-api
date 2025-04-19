@@ -13,5 +13,6 @@
         public required string ExpiryYear { get; set; }
         public required string CVV { get; set; }
         public double TotalAmount { get; set; }
+        public int NumberOfGuests { get; set; }
     }
 }

@@ -11,7 +11,7 @@
         public int Beds { get; set; }
         public int GuestsPerRoom { get; set; }
         public required string Name { get; set; }
-        public string? ImageUrl { get; set; }
+        public IEnumerable<string>? ImageUrl { get; set; }
         public int Bathrooms { get; set; }
         public required IEnumerable<IEnumerable<DateTime>> ReservedDateRanges { get; set; }
     }

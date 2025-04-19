@@ -104,7 +104,7 @@ namespace bungalowparadise_api.Controllers
             return Ok(new
             {
                 token,
-                user = new { user.Id, user.Email, user.Name, user.LastName, user.Phone }
+                user = new { user.Id, user.Email, user.Name, user.LastName, user.Phone, user.Role }
             });
         }
 
@@ -162,7 +162,7 @@ namespace bungalowparadise_api.Controllers
             if (user == null)
                 return Unauthorized();
 
-            return Ok(new { user.Id, user.Email, user.Name, user.LastName, user.Phone });
+            return Ok(new { user.Id, user.Email, user.Name, user.LastName, user.Phone, user.Role });
         }
 
         private string GenerateJwtToken(User user)

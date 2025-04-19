@@ -57,7 +57,7 @@ namespace bungalowparadise_api.Controllers
                 Beds = x.Beds,
                 GuestsPerRoom = x.GuestsPerRoom,
                 Name = x.Name,
-                ImageUrl = x.ImageUrl,
+                ImageUrl = x.ImageUrl?.Split(',') ?? [],
                 Bathrooms = x.Bathrooms,
                 ReservedDateRanges = x.ReservedDateRanges,
             }).OrderBy(x => x.Price).ToList();
@@ -115,7 +115,10 @@ namespace bungalowparadise_api.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadRoomWithImage([FromForm] SaveRoomDto room, IFormFile image, [FromServices] S3Service s3Service)
+        public async Task<IActionResult> UploadRoomWithImage(
+            [FromForm] SaveRoomDto room, 
+            [FromForm] List<IFormFile> images, 
+            [FromServices] S3Service s3Service)
         {
             var roomToSave = new Room()
             {
@@ -128,16 +131,15 @@ namespace bungalowparadise_api.Controllers
                 Beds = room.Beds,
                 GuestsPerRoom = room.GuestsPerRoom,
                 Price = room.Price,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
 
-            if (image != null)
+            if (images != null && images.Count != 0)
             {
-                var imageUrl = await s3Service.UploadFileAsync(image, "rooms");
-                roomToSave.ImageUrl = imageUrl;
+                var imageUrls = await s3Service.UploadFilesAsync(images, "rooms");
+                roomToSave.ImageUrl = string.Join(",", imageUrls);
             }
-
-            roomToSave.CreatedAt = DateTime.UtcNow;
-            roomToSave.UpdatedAt = DateTime.UtcNow;
 
             await _context.Rooms.AddAsync(roomToSave);
             await _context.SaveChangesAsync();

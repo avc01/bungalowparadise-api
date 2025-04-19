@@ -37,6 +37,30 @@ namespace bungalowparadise_api.Services
             return $"https://{_bucketName}.s3.amazonaws.com/{key}";
         }
 
+        public async Task<List<string>> UploadFilesAsync(IEnumerable<IFormFile> files, string keyPrefix)
+        {
+            var uploadedUrls = new List<string>();
+
+            foreach (var file in files)
+            {
+                var key = $"{keyPrefix}/{Guid.NewGuid()}_{file.FileName}";
+                using var stream = file.OpenReadStream();
+
+                var request = new PutObjectRequest
+                {
+                    BucketName = _bucketName,
+                    Key = key,
+                    InputStream = stream,
+                    ContentType = file.ContentType
+                };
+
+                await _s3Client.PutObjectAsync(request);
+                uploadedUrls.Add($"https://{_bucketName}.s3.amazonaws.com/{key}");
+            }
+
+            return uploadedUrls;
+        }
+
         public async Task<Stream?> GetFileAsync(string key)
         {
             var response = await _s3Client.GetObjectAsync(_bucketName, key);
