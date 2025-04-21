@@ -44,7 +44,7 @@ namespace bungalowparadise_api.HostedServices
                 {
                     try
                     {
-                        // await SendEmailAsync(reservation.User.Email, ReminderMailTemplate.GetReminderTemplate(reservation), "Recortadorio de su Reserva con Bundalow Paradise!");
+                        await SendEmailAsync(reservation.User.Email, ReminderMailTemplate.GetReminderTemplate(reservation), "Recortadorio de su Reserva con Bundalow Paradise!");
                         await UpdateNotificationStatusAsync(reservation, "Sent");
                     }
                     catch (Exception)
