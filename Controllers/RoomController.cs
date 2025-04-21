@@ -24,6 +24,7 @@ namespace bungalowparadise_api.Controllers
         public async Task<ActionResult<IEnumerable<GetRoomDto>>> GetRooms()
         {
             var roomsWithReservedDates = await _context.Rooms.AsNoTracking()
+                                                             .Where(x => x.Status == "Available")
                                                              .Select(r => new 
                                                              {
                                                                 r.Id,
@@ -63,6 +64,30 @@ namespace bungalowparadise_api.Controllers
             }).OrderBy(x => x.Price).ToList();
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet("admin/rooms")]
+        public async Task<ActionResult<IEnumerable<GetRoomDto>>> GetAllRooms()
+        {
+            var allRooms = await _context.Rooms.AsNoTracking()
+                                               .ToListAsync();
+
+            return allRooms.Select(x => new GetRoomDto()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Description = x.Description,
+                Price = x.Price,
+                ImageUrl = x.ImageUrl?.Split(',') ?? [],
+                Type = x.Type,
+                GuestsPerRoom = x.GuestsPerRoom,
+                Bathrooms = x.Bathrooms,
+                Status = x.Status,
+                RoomNumber = x.RoomNumber,
+                Beds = x.Beds,
+                ReservedDateRanges = [],
+            }).ToList();
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Room>> GetRoom(int id)
         {
@@ -84,23 +109,54 @@ namespace bungalowparadise_api.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRoom(int id, Room room)
+        [HttpPut("admin/update")]
+        public async Task<IActionResult> UpdateRoom([FromForm] EditRoomDto room, [FromServices] S3Service s3Service)
         {
-            if (id != room.Id)
+            var existingRoom = await _context.Rooms.FindAsync(room.Id);
+            if (existingRoom == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(room).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            // Update room fields
+            existingRoom.Name = room.Name;
+            existingRoom.RoomNumber = room.RoomNumber;
+            existingRoom.Type = room.Type;
+            existingRoom.Price = room.Price;
+            existingRoom.Status = room.Status;
+            existingRoom.Description = room.Description;
+            existingRoom.Beds = room.Beds;
+            existingRoom.Bathrooms = room.Bathrooms;
+            existingRoom.GuestsPerRoom = room.GuestsPerRoom;
+            existingRoom.UpdatedAt = DateTime.UtcNow;
 
+            // If new images are uploaded, delete old ones and upload new ones
+            if (room.Images != null && room.Images.Count > 0)
+            {
+                // 🔥 Delete old images
+                if (!string.IsNullOrWhiteSpace(existingRoom.ImageUrl))
+                {
+                    var oldKeys = existingRoom.ImageUrl
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(url => new Uri(url.Trim()).AbsolutePath.TrimStart('/'))
+                        .ToList();
+
+                    await s3Service.DeleteFilesAsync(oldKeys);
+                }
+
+                // ✅ Upload new images
+                var newUrls = await s3Service.UploadFilesAsync(room.Images, "rooms");
+                existingRoom.ImageUrl = string.Join(",", newUrls);
+            }
+
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
+
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRoom(int id)
+        public async Task<IActionResult> DeleteRoom(int id, [FromServices] S3Service s3Service)
         {
             var room = await _context.Rooms.FindAsync(id);
             if (room == null)
@@ -108,8 +164,36 @@ namespace bungalowparadise_api.Controllers
                 return NotFound();
             }
 
+            // Parse image URLs into S3 keys
+            var imageKeys = new List<string?>();
+
+            if (!string.IsNullOrWhiteSpace(room.ImageUrl))
+            {
+                imageKeys = [.. room.ImageUrl
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(url =>
+                    {
+                        try
+                        {
+                            var uri = new Uri(url.Trim());
+                            return uri.AbsolutePath.TrimStart('/'); // removes leading "/"
+                        }
+                        catch
+                        {
+                            return null;
+                        }
+                    })
+                    .Where(key => !string.IsNullOrEmpty(key))];
+            }
+
+            if (imageKeys.Count > 0)
+            {
+                await s3Service.DeleteFilesAsync(imageKeys);
+            }
+
             _context.Rooms.Remove(room);
             await _context.SaveChangesAsync();
+
             return NoContent();
         }
 

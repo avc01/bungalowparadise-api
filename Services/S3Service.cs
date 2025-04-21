@@ -61,6 +61,21 @@ namespace bungalowparadise_api.Services
             return uploadedUrls;
         }
 
+        public async Task DeleteFilesAsync(List<string> keys)
+        {
+            if (keys == null || keys.Count == 0)
+                throw new ArgumentException("No keys provided");
+
+            var request = new DeleteObjectsRequest
+            {
+                BucketName = _bucketName,
+                Objects = keys.Select(k => new KeyVersion { Key = k }).ToList()
+            };
+
+            await _s3Client.DeleteObjectsAsync(request);
+        }
+
+
         public async Task<Stream?> GetFileAsync(string key)
         {
             var response = await _s3Client.GetObjectAsync(_bucketName, key);
